@@ -91,7 +91,7 @@ export const App: React.FC = () => {
                 <p className="text-sm text-lotus-charcoal/70">
                   The page you are looking for does not exist or has been relocated.
                 </p>
-                
+                <a
                   href="/"
                   className="inline-block px-6 py-2.5 rounded-xl bg-lotus-forest text-white text-xs font-semibold uppercase tracking-wider"
                 >
