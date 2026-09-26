@@ -1,0 +1,6 @@
+{
+  "rewrites": [
+    { "source": "/api/:path*", "destination": "https://vietcraft.onrender.com/api/:path*" },
+    { "source": "/uploads/:path*", "destination": "https://vietcraft.onrender.com/uploads/:path*" }
+  ]
+}
