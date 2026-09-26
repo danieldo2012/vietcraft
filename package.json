@@ -1,0 +1,42 @@
+{
+  "name": "vietcraft",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Natural home decor blog and Amazon affiliate product discovery platform focused on Vietnamese craftsmanship",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspaces --if-present",
+    "dev:api": "npm run dev --workspace=@vietcraft/api",
+    "dev:web": "npm run dev --workspace=@vietcraft/web",
+    "dev:admin": "npm run dev --workspace=@vietcraft/admin",
+    "build": "npm run build --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "seed": "npm run seed --workspace=@vietcraft/api",
+    "seed:production": "npm run seed:production --workspace=@vietcraft/api",
+    "db:backup": "npm run db:backup --workspace=@vietcraft/api",
+    "db:migrate": "npm run db:migrate --workspace=@vietcraft/api",
+    "db:verify": "npm run db:verify --workspace=@vietcraft/api"
+  },
+  "keywords": [
+    "vietcraft",
+    "natural-home-decor",
+    "vietnamese-craftsmanship",
+    "affiliate-discovery",
+    "mern",
+    "typescript"
+  ],
+  "author": "VietCraft Team",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.7.3"
+  },
+  "dependencies": {
+    "framer-motion": "^13.4.0"
+  }
+}
