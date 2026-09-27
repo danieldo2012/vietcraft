@@ -49,13 +49,13 @@ export const MaterialDetailPage: React.FC = () => {
         title={`${material.name} - Craft Heritage & Curated Home Decor | VietCraft`}
         description={material.shortDescription}
         ogImage={material.coverImage}
-        canonicalUrl={`https://vietcraft.com/discover/${material.slug}`}
+        canonicalUrl={`${window.location.origin}/discover/${material.slug}`}
         structuredData={{
           '@context': 'https://schema.org',
           '@type': 'CollectionPage',
           name: `${material.name} Home Decor`,
           description: material.shortDescription,
-          url: `https://vietcraft.com/discover/${material.slug}`
+          url: `${window.location.origin}/discover/${material.slug}`
         }}
       />
 
