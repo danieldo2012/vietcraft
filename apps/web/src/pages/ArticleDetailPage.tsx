@@ -58,7 +58,7 @@ export const ArticleDetailPage: React.FC = () => {
         title={`${post.title} | VietCraft Journal`}
         description={post.excerpt}
         ogImage={post.featuredImage}
-        canonicalUrl={`https://vietcraft.com/articles/${post.slug}`}
+        canonicalUrl={`${window.location.origin}/articles/${post.slug}`}
         structuredData={{
           '@context': 'https://schema.org',
           '@type': 'Article',
