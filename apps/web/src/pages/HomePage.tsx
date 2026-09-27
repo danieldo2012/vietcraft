@@ -51,10 +51,10 @@ export const HomePage: React.FC = () => {
           '@context': 'https://schema.org',
           '@type': 'WebSite',
           name: 'VietCraft',
-          url: 'https://vietcraft.com',
+          url: window.location.origin,
           potentialAction: {
             '@type': 'SearchAction',
-            target: 'https://vietcraft.com/search?q={search_term_string}',
+            target: `${window.location.origin}/search?q={search_term_string}`,
             'query-input': 'required name=search_term_string'
           }
         }}
