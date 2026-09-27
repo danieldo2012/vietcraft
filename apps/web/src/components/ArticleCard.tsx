@@ -24,12 +24,18 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({ article }) => {
   return (
     <article className="group flex flex-col bg-white rounded-2xl border border-lotus-sand/40 overflow-hidden hover:border-lotus-sand hover:shadow-lg transition-all duration-300">
       <Link to={`/articles/${article.slug}`} className="block relative aspect-[16/10] overflow-hidden bg-lotus-sand/20">
-        <img
-          src={article.featuredImage}
-          alt={article.title}
-          loading="lazy"
-          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-        />
+        {article.featuredImage ? (
+          <img
+            src={article.featuredImage}
+            alt={article.title}
+            loading="lazy"
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center bg-lotus-sand/30 text-lotus-forest/40 font-serif text-sm">
+            VietCraft
+          </div>
+        )}
         {materialName && (
           <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-lotus-ivory/95 backdrop-blur-sm border border-lotus-sand/60 text-[11px] font-medium text-lotus-forest">
             {materialName}
