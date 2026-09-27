@@ -76,7 +76,7 @@ export const ProductsPage: React.FC = () => {
       <SEOHead
         title="Curated Natural Home Decor & Artisan Discoveries | VietCraft"
         description="Browse handcrafted Vietnamese home decor, lighting, ceramics, baskets, and furniture. Curated for US customers and discovered via Amazon."
-        canonicalUrl="https://vietcraft.com/products"
+        canonicalUrl={`${window.location.origin}/products`}
       />
 
       {/* Header & Page Title */}
