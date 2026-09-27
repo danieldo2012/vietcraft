@@ -55,7 +55,7 @@ export const ArticlesPage: React.FC = () => {
       <SEOHead
         title="Artisan Journal & Craft Lore | VietCraft"
         description="Essays and guides on ancient Vietnamese craft traditions, sustainable living, bamboo smoking, Red River pottery, and slow interiors."
-        canonicalUrl="https://vietcraft.com/articles"
+        canonicalUrl={`${window.location.origin}/articles`}
       />
 
       {/* Header section */}
