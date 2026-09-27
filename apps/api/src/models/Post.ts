@@ -54,7 +54,7 @@ const PostSchema = new Schema<IPostDocument>(
     },
     featuredImage: {
       type: String,
-      required: [true, 'Featured image is required']
+      default: ''
     },
     author: {
       type: PostAuthorSchema,
