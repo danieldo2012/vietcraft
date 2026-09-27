@@ -83,7 +83,7 @@ export const ProductDetailPage: React.FC = () => {
         title={`${product.title} | VietCraft`}
         description={product.shortDescription}
         ogImage={currentImage}
-        canonicalUrl={`https://vietcraft.com/products/${product.slug}`}
+        canonicalUrl={`${window.location.origin}/products/${product.slug}`}
         structuredData={{
           '@context': 'https://schema.org',
           '@type': 'Product',
@@ -96,7 +96,7 @@ export const ProductDetailPage: React.FC = () => {
             price: product.price,
             priceCurrency: product.currency || 'USD',
             availability: 'https://schema.org/InStock',
-            url: `https://vietcraft.com/products/${product.slug}`
+            url: `${window.location.origin}/products/${product.slug}`
           }
         }}
       />
