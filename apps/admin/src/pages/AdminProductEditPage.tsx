@@ -28,6 +28,7 @@ export const AdminProductEditPage: React.FC = () => {
   const [amazonInput, setAmazonInput] = useState('');
   const [scrapeResult, setScrapeResult] = useState<AmazonScrapedProduct | null>(null);
   const [newImageUrl, setNewImageUrl] = useState('');
+  const [includeDimensions, setIncludeDimensions] = useState(false);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -82,6 +83,13 @@ export const AdminProductEditPage: React.FC = () => {
       if (existingProduct.asin && !amazonInput) {
         setAmazonInput(existingProduct.asin);
       }
+
+      setIncludeDimensions(
+        Boolean(
+          existingProduct.dimensions &&
+            (existingProduct.dimensions.height || existingProduct.dimensions.width || existingProduct.dimensions.depth)
+        )
+      );
 
       setFormData({
         title: existingProduct.title,
@@ -294,7 +302,7 @@ export const AdminProductEditPage: React.FC = () => {
       featured: formData.featured,
       status: formData.status,
       tags,
-      dimensions: formData.dimensions,
+      dimensions: includeDimensions ? formData.dimensions : undefined,
       seo: {
         title: formData.seo.title || formData.title,
         description: formData.seo.description || formData.shortDescription
@@ -661,67 +669,84 @@ export const AdminProductEditPage: React.FC = () => {
 
           {/* Dimensions */}
           <div className="pt-2 border-t border-gray-100 space-y-3">
-            <h3 className="font-serif text-base font-bold text-gray-900">Dimensions & Sizing</h3>
-            <div className="grid grid-cols-4 gap-3">
-              <div>
-                <label className="block text-[11px] text-gray-500 mb-1">Height</label>
+            <div className="flex items-center justify-between">
+              <h3 className="font-serif text-base font-bold text-gray-900">Dimensions & Sizing</h3>
+              <label className="flex items-center gap-2 text-xs font-medium text-gray-600 cursor-pointer select-none">
                 <input
-                  type="number"
-                  value={formData.dimensions.height}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      dimensions: { ...formData.dimensions, height: Number(e.target.value) }
-                    })
-                  }
-                  className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-gray-300"
+                  type="checkbox"
+                  checked={includeDimensions}
+                  onChange={(e) => setIncludeDimensions(e.target.checked)}
+                  className="rounded border-gray-300 text-lotus-forest focus:ring-lotus-forest"
                 />
-              </div>
-              <div>
-                <label className="block text-[11px] text-gray-500 mb-1">Width</label>
-                <input
-                  type="number"
-                  value={formData.dimensions.width}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      dimensions: { ...formData.dimensions, width: Number(e.target.value) }
-                    })
-                  }
-                  className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-gray-300"
-                />
-              </div>
-              <div>
-                <label className="block text-[11px] text-gray-500 mb-1">Depth</label>
-                <input
-                  type="number"
-                  value={formData.dimensions.depth}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      dimensions: { ...formData.dimensions, depth: Number(e.target.value) }
-                    })
-                  }
-                  className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-gray-300"
-                />
-              </div>
-              <div>
-                <label className="block text-[11px] text-gray-500 mb-1">Unit</label>
-                <select
-                  value={formData.dimensions.unit}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      dimensions: { ...formData.dimensions, unit: e.target.value }
-                    })
-                  }
-                  className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-gray-300 bg-white"
-                >
-                  <option value="in">Inches (in)</option>
-                  <option value="cm">Centimeters (cm)</option>
-                </select>
-              </div>
+                Include dimensions for this product
+              </label>
             </div>
+            {includeDimensions ? (
+              <div className="grid grid-cols-4 gap-3">
+                <div>
+                  <label className="block text-[11px] text-gray-500 mb-1">Height</label>
+                  <input
+                    type="number"
+                    value={formData.dimensions.height}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        dimensions: { ...formData.dimensions, height: Number(e.target.value) }
+                      })
+                    }
+                    className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-gray-300"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] text-gray-500 mb-1">Width</label>
+                  <input
+                    type="number"
+                    value={formData.dimensions.width}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        dimensions: { ...formData.dimensions, width: Number(e.target.value) }
+                      })
+                    }
+                    className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-gray-300"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] text-gray-500 mb-1">Depth</label>
+                  <input
+                    type="number"
+                    value={formData.dimensions.depth}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        dimensions: { ...formData.dimensions, depth: Number(e.target.value) }
+                      })
+                    }
+                    className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-gray-300"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] text-gray-500 mb-1">Unit</label>
+                  <select
+                    value={formData.dimensions.unit}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        dimensions: { ...formData.dimensions, unit: e.target.value }
+                      })
+                    }
+                    className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-gray-300 bg-white"
+                  >
+                    <option value="in">Inches (in)</option>
+                    <option value="cm">Centimeters (cm)</option>
+                  </select>
+                </div>
+              </div>
+            ) : (
+              <p className="text-[11px] text-gray-400">
+                Not included — this product's listing will not display a size/dimensions section.
+              </p>
+            )}
           </div>
         </div>
 
