@@ -95,7 +95,14 @@ export const AdminPostEditPage: React.FC = () => {
       setTimeout(() => navigate('/admin/posts'), 1200);
     },
     onError: (err: any) => {
-      setFeedback({ type: 'error', text: err.response?.data?.message || 'Failed to save post.' });
+      const serverMsg = err.response?.data?.message;
+      const validationErrors = err.response?.data?.errors;
+      if (validationErrors && Array.isArray(validationErrors) && validationErrors.length > 0) {
+        const errorDetails = validationErrors.map((e: any) => `${e.field}: ${e.message}`).join(' • ');
+        setFeedback({ type: 'error', text: errorDetails });
+      } else {
+        setFeedback({ type: 'error', text: serverMsg || 'Failed to save post.' });
+      }
     }
   });
 
