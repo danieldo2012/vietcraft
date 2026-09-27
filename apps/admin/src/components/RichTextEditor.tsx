@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
-import { Bold, Italic, Heading2, Heading3, List, Quote, Eye, Code } from 'lucide-react';
+import { Bold, Italic, Heading2, Heading3, List, Quote, Eye, Code, Image as ImageIcon, Loader2 } from 'lucide-react';
+import { adminApi } from '../services/adminApi';
 
 interface RichTextEditorProps {
   value: string;
@@ -13,7 +14,56 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
   label = 'Article Body (Rich Text / HTML)'
 }) => {
   const [isPreview, setIsPreview] = useState(false);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [imageError, setImageError] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const imageInputRef = useRef<HTMLInputElement>(null);
+  const lastCursorRef = useRef<number>(0);
+
+  const trackCursor = () => {
+    if (textareaRef.current) {
+      lastCursorRef.current = textareaRef.current.selectionStart;
+    }
+  };
+
+  const handleInsertImageClick = () => {
+    setImageError('');
+    imageInputRef.current?.click();
+  };
+
+  const handleImageFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 10 * 1024 * 1024) {
+      setImageError('File size exceeds 10MB limit.');
+      if (imageInputRef.current) imageInputRef.current.value = '';
+      return;
+    }
+
+    setIsUploadingImage(true);
+    setImageError('');
+
+    try {
+      const result = await adminApi.uploadImage(file);
+      const pos = lastCursorRef.current;
+      const imageTag = `\n<img src="${result.url}" alt="" style="max-width: 100%; border-radius: 12px;" />\n`;
+      const newValue = value.substring(0, pos) + imageTag + value.substring(pos);
+      onChange(newValue);
+
+      setTimeout(() => {
+        const newPos = pos + imageTag.length;
+        textareaRef.current?.focus();
+        textareaRef.current?.setSelectionRange(newPos, newPos);
+        lastCursorRef.current = newPos;
+      }, 50);
+    } catch (err: any) {
+      setImageError(err.response?.data?.message || 'Failed to upload image.');
+    } finally {
+      setIsUploadingImage(false);
+      if (imageInputRef.current) imageInputRef.current.value = '';
+    }
+  };
 
   const insertTag = (openTag: string, closeTag: string) => {
     const textarea = textareaRef.current;
@@ -108,8 +158,30 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
           >
             <List className="w-4 h-4" />
           </button>
+          <div className="w-px h-4 bg-gray-300 mx-1" />
+          <button
+            type="button"
+            onClick={handleInsertImageClick}
+            disabled={isUploadingImage}
+            title="Insert Image"
+            className="p-1.5 rounded hover:bg-gray-200 text-gray-700 disabled:opacity-50"
+          >
+            {isUploadingImage ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <ImageIcon className="w-4 h-4" />
+            )}
+          </button>
+          <input
+            ref={imageInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp,image/gif"
+            onChange={handleImageFileChange}
+            className="hidden"
+          />
         </div>
       )}
+      {imageError && <p className="text-xs text-red-600">{imageError}</p>}
 
       {/* Editor Body */}
       {isPreview ? (
@@ -123,7 +195,10 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
           rows={14}
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          placeholder="Write your article content using HTML tags like <p>, <h2>, <blockquote>..."
+          onSelect={trackCursor}
+          onKeyUp={trackCursor}
+          onClick={trackCursor}
+          placeholder="Write your article content using HTML tags like <p>, <h2>, <blockquote>... Use the image icon above to insert a photo anywhere in the article."
           className="w-full p-4 rounded-b-xl border border-gray-300 font-mono text-xs text-gray-800 focus:outline-none focus:border-lotus-forest bg-white leading-relaxed"
         />
       )}
