@@ -277,8 +277,8 @@ export const AdminPostEditPage: React.FC = () => {
             <ImageUploader
               value={formData.featuredImage}
               onChange={(url) => setFormData({ ...formData, featuredImage: url })}
-              label="Featured Image *"
-              helpText="Primary hero photo displayed on the article header and blog feed."
+              label="Featured Image (Optional)"
+              helpText="Primary hero photo displayed on the article header and blog feed. Leave empty to publish without a cover photo."
             />
           </div>
 
