@@ -126,16 +126,18 @@ export const ArticleDetailPage: React.FC = () => {
         </div>
       </header>
 
-      {/* Featured Cover Image */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="relative aspect-[16/9] rounded-3xl overflow-hidden shadow-xl border border-lotus-sand/50">
-          <img
-            src={post.featuredImage}
-            alt={post.title}
-            className="w-full h-full object-cover object-center"
-          />
+      {/* Featured Cover Image (only when one was set) */}
+      {post.featuredImage && (
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="relative aspect-[16/9] rounded-3xl overflow-hidden shadow-xl border border-lotus-sand/50">
+            <img
+              src={post.featuredImage}
+              alt={post.title}
+              className="w-full h-full object-cover object-center"
+            />
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Article Body Content */}
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
