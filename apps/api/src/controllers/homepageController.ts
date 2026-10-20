@@ -4,30 +4,32 @@ import { Product } from '../models/Product';
 import { Material } from '../models/Material';
 import { sendError, sendSuccess } from '../utils/response';
 
+// How many featured products the public homepage shows.
+export const HOME_FEATURED_LIMIT = 8;
+
+/**
+ * Featured products are driven by the "Feature on Homepage" switch on each product,
+ * so the homepage always reflects the catalog (newest featured first) without any manual list.
+ */
+export const getLiveFeaturedProducts = () =>
+  Product.find({ status: 'active', featured: true })
+    .sort({ createdAt: -1 })
+    .limit(HOME_FEATURED_LIMIT)
+    .populate('material', 'name slug')
+    .populate('category', 'name slug');
+
 export const getHomepage = async (req: Request, res: Response): Promise<void> => {
-  let homepage = await Homepage.findOne({ isPublished: true })
-    .populate({
-      path: 'featuredProductIds',
-      match: { status: 'active' },
-      populate: [
-        { path: 'material', select: 'name slug' },
-        { path: 'category', select: 'name slug' }
-      ]
-    })
-    .populate({
-      path: 'materialSection.enabledMaterialIds',
-      match: { isActive: true },
-      options: { sort: { displayOrder: 1 } }
-    });
+  const homepage = await Homepage.findOne({ isPublished: true }).populate({
+    path: 'materialSection.enabledMaterialIds',
+    match: { isActive: true },
+    options: { sort: { displayOrder: 1 } }
+  });
 
   if (!homepage) {
     // If no custom doc yet, fetch fallback active materials and featured products
     const [materials, products] = await Promise.all([
       Material.find({ isActive: true }).sort({ displayOrder: 1 }),
-      Product.find({ status: 'active', featured: true })
-        .limit(8)
-        .populate('material', 'name slug')
-        .populate('category', 'name slug')
+      getLiveFeaturedProducts()
     ]);
 
     const fallbackHomepage = {
@@ -79,13 +81,18 @@ export const getHomepage = async (req: Request, res: Response): Promise<void> =>
     return;
   }
 
+  const payload: any = homepage.toObject();
+
   // If enabledMaterialIds is empty, populate all active materials
-  if (!homepage.materialSection.enabledMaterialIds || homepage.materialSection.enabledMaterialIds.length === 0) {
+  if (!payload.materialSection?.enabledMaterialIds || payload.materialSection.enabledMaterialIds.length === 0) {
     const allMaterials = await Material.find({ isActive: true }).sort({ displayOrder: 1 });
-    homepage.materialSection.enabledMaterialIds = allMaterials as any;
+    payload.materialSection = { ...(payload.materialSection || {}), enabledMaterialIds: allMaterials };
   }
 
-  sendSuccess(res, homepage, 'Homepage configuration retrieved');
+  // Always use the live list of featured products instead of a hand-picked list.
+  payload.featuredProductIds = await getLiveFeaturedProducts();
+
+  sendSuccess(res, payload, 'Homepage configuration retrieved');
 };
 
 export const adminGetHomepage = async (req: Request, res: Response): Promise<void> => {
