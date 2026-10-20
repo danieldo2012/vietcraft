@@ -153,6 +153,29 @@ export const MaterialDetailPage: React.FC = () => {
         </div>
       </section>
 
+      {/* Related Journal Articles for this Material */}
+      {articles && articles.length > 0 && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between border-b border-lotus-sand/30 pb-4 mb-8">
+            <div className="flex items-center gap-2.5">
+              <BookOpen className="w-5 h-5 text-lotus-clay" />
+              <h2 className="font-serif text-2xl sm:text-3xl font-bold text-lotus-forest">
+                Journal & Craft Stories
+              </h2>
+            </div>
+            <Link to="/search?type=articles" className="text-xs sm:text-sm font-semibold text-lotus-clay hover:underline">
+              Browse all articles →
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {articles.map((art) => (
+              <ArticleCard key={art._id} article={art} />
+            ))}
+          </div>
+        </section>
+      )}
+
       {/* Curated Products for this Material */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between border-b border-lotus-sand/30 pb-4 mb-8">
@@ -182,29 +205,6 @@ export const MaterialDetailPage: React.FC = () => {
           </div>
         )}
       </section>
-
-      {/* Related Journal Articles for this Material */}
-      {articles && articles.length > 0 && (
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between border-b border-lotus-sand/30 pb-4 mb-8">
-            <div className="flex items-center gap-2.5">
-              <BookOpen className="w-5 h-5 text-lotus-clay" />
-              <h2 className="font-serif text-2xl sm:text-3xl font-bold text-lotus-forest">
-                Journal & Craft Stories
-              </h2>
-            </div>
-            <Link to="/search?type=articles" className="text-xs sm:text-sm font-semibold text-lotus-clay hover:underline">
-              Browse all articles →
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {articles.map((art) => (
-              <ArticleCard key={art._id} article={art} />
-            ))}
-          </div>
-        </section>
-      )}
     </div>
   );
 };

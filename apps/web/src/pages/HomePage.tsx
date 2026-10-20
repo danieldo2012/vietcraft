@@ -25,7 +25,7 @@ const staggerContainer = {
 };
 
 export const HomePage: React.FC = () => {
-  const { data: homepage } = useQuery({
+  const { data: homepage, isLoading: homepageLoading } = useQuery({
     queryKey: ['homepage'],
     queryFn: api.getHomepage
   });
@@ -147,7 +147,7 @@ export const HomePage: React.FC = () => {
         <MaterialGrid materials={materials} />
       </motion.section>
 
-      {/* Section 3: Featured Products (CMS Managed) */}
+      {/* Section 3: Featured Products (automatic: products flagged "Feature on Homepage" in the admin) */}
       <motion.section
         variants={fadeInUp}
         initial="hidden"
@@ -173,7 +173,7 @@ export const HomePage: React.FC = () => {
             to="/products"
             className="mt-4 md:mt-0 inline-flex items-center gap-2 text-sm font-medium text-lotus-clay hover:text-lotus-clay/80 group"
           >
-            <span>View all products ({homepage?.featuredProductIds?.length || 14}+)</span>
+            <span>View all products</span>
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>
@@ -190,8 +190,8 @@ export const HomePage: React.FC = () => {
               <ProductCard key={product._id} product={product} />
             ))
           ) : (
-            <div className="col-span-4 py-12 text-center text-lotus-charcoal/60">
-              Loading featured products...
+            <div className="col-span-full py-12 text-center text-lotus-charcoal/60">
+              {homepageLoading ? 'Loading featured products...' : 'New featured pieces are coming soon. Browse all products in the meantime.'}
             </div>
           )}
         </div>
