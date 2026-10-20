@@ -1,12 +1,71 @@
 ﻿import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { ArrowLeft, MapPin, Sparkles, Hammer, BookOpen, Package } from 'lucide-react';
+import { ArrowLeft, MapPin, Sparkles, Hammer, BookOpen, Package, Clock, ArrowRight } from 'lucide-react';
+import { Post } from '@vietcraft/shared';
 import { api } from '../services/api';
 import { SEOHead } from '../components/SEOHead';
 import { ProductCard } from '../components/ProductCard';
 import { ArticleCard } from '../components/ArticleCard';
 import { AffiliateNotice } from '../components/AffiliateNotice';
+
+/** Wide, horizontal layout used when a material has a single story, so the section never looks half empty. */
+const FeaturedStory: React.FC<{ article: Post }> = ({ article }) => {
+  const formattedDate = article.publishedAt
+    ? new Date(article.publishedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+    : '';
+
+  return (
+    <article className="group grid grid-cols-1 md:grid-cols-5 bg-white rounded-3xl border border-lotus-sand/40 overflow-hidden hover:border-lotus-sand hover:shadow-lg transition-all duration-300">
+      <Link
+        to={`/articles/${article.slug}`}
+        className="md:col-span-2 block relative aspect-[16/10] md:aspect-auto md:min-h-[300px] overflow-hidden bg-lotus-sand/20"
+      >
+        {article.featuredImage ? (
+          <img
+            src={article.featuredImage}
+            alt={article.title}
+            loading="lazy"
+            className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+          />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center bg-lotus-sand/30 text-lotus-forest/40 font-serif text-sm">
+            VietCraft
+          </div>
+        )}
+      </Link>
+
+      <div className="md:col-span-3 p-6 sm:p-10 flex flex-col justify-center">
+        <div className="flex items-center gap-3 text-xs text-lotus-charcoal/50 mb-3">
+          {formattedDate && <span>{formattedDate}</span>}
+          {formattedDate && <span className="w-1 h-1 rounded-full bg-lotus-sand" />}
+          <span className="flex items-center gap-1">
+            <Clock className="w-3 h-3 text-lotus-clay" />
+            {article.readingTime || 5} min read
+          </span>
+        </div>
+        <Link to={`/articles/${article.slug}`}>
+          <h3 className="font-serif text-2xl sm:text-3xl font-bold text-lotus-charcoal group-hover:text-lotus-forest transition-colors leading-snug">
+            {article.title}
+          </h3>
+        </Link>
+        <p className="text-sm sm:text-base text-lotus-charcoal/70 line-clamp-3 mt-3 leading-relaxed font-light">
+          {article.excerpt}
+        </p>
+        <div className="mt-6 pt-5 border-t border-lotus-sand/20 flex items-center justify-between">
+          <span className="text-xs text-lotus-forest font-medium">By {article.author?.name || 'VietCraft'}</span>
+          <Link
+            to={`/articles/${article.slug}`}
+            className="text-xs font-semibold text-lotus-clay group-hover:text-lotus-clay-dark flex items-center gap-1"
+          >
+            <span>Read Article</span>
+            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+          </Link>
+        </div>
+      </div>
+    </article>
+  );
+};
 
 export const MaterialDetailPage: React.FC = () => {
   const { materialSlug } = useParams<{ materialSlug: string }>();
@@ -44,7 +103,7 @@ export const MaterialDetailPage: React.FC = () => {
   const { material, articles, products } = data;
 
   return (
-    <div className="space-y-16 pb-24">
+    <div className="space-y-16">
       <SEOHead
         title={`${material.name} - Craft Heritage & Curated Home Decor | VietCraft`}
         description={material.shortDescription}
@@ -95,8 +154,79 @@ export const MaterialDetailPage: React.FC = () => {
         </div>
       </section>
 
-      {/* Main Narrative & Craft Breakdown */}
+      {/* Journal & Craft Stories: shown first so readers start with the story */}
+      {articles && articles.length > 0 && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between border-b border-lotus-sand/30 pb-4 mb-8">
+            <div className="flex items-center gap-2.5">
+              <BookOpen className="w-5 h-5 text-lotus-clay" />
+              <h2 className="font-serif text-2xl sm:text-3xl font-bold text-lotus-forest">
+                Journal & Craft Stories
+              </h2>
+            </div>
+            <Link
+              to="/search?type=articles"
+              className="text-xs sm:text-sm font-semibold text-lotus-clay hover:underline"
+            >
+              Browse all articles →
+            </Link>
+          </div>
+
+          {articles.length === 1 ? (
+            <FeaturedStory article={articles[0]} />
+          ) : (
+            <div
+              className={`grid grid-cols-1 gap-6 ${
+                articles.length === 2 ? 'md:grid-cols-2' : 'md:grid-cols-2 lg:grid-cols-3'
+              }`}
+            >
+              {articles.map((art) => (
+                <ArticleCard key={art._id} article={art} />
+              ))}
+            </div>
+          )}
+        </section>
+      )}
+
+      {/* Curated Products for this Material */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between border-b border-lotus-sand/30 pb-4 mb-8">
+          <div className="flex items-center gap-2.5">
+            <Package className="w-5 h-5 text-lotus-clay" />
+            <h2 className="font-serif text-2xl sm:text-3xl font-bold text-lotus-forest">
+              Curated {material.name} Decor
+            </h2>
+          </div>
+          <Link
+            to={`/products?material=${material.slug}`}
+            className="text-xs sm:text-sm font-semibold text-lotus-clay hover:underline"
+          >
+            View all {material.name} products →
+          </Link>
+        </div>
+
+        {products && products.length > 0 && (
+          <div className="mb-6">
+            <AffiliateNotice compact />
+          </div>
+        )}
+
+        {products && products.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {products.map((prod) => (
+              <ProductCard key={prod._id} product={prod} />
+            ))}
+          </div>
+        ) : (
+          <div className="py-8 text-center text-lotus-charcoal/60 bg-white rounded-2xl border border-lotus-sand/30">
+            No products currently cataloged under this material. Check back soon!
+          </div>
+        )}
+      </section>
+
+      {/* Cultural legacy & craft techniques: closes the page */}
+      <section className="bg-white/60 border-t border-lotus-sand/40 py-16 sm:py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
           {/* Detailed Narrative */}
           <div className="lg:col-span-8 space-y-6">
@@ -151,59 +281,7 @@ export const MaterialDetailPage: React.FC = () => {
             <AffiliateNotice />
           </div>
         </div>
-      </section>
-
-      {/* Related Journal Articles for this Material */}
-      {articles && articles.length > 0 && (
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between border-b border-lotus-sand/30 pb-4 mb-8">
-            <div className="flex items-center gap-2.5">
-              <BookOpen className="w-5 h-5 text-lotus-clay" />
-              <h2 className="font-serif text-2xl sm:text-3xl font-bold text-lotus-forest">
-                Journal & Craft Stories
-              </h2>
-            </div>
-            <Link to="/search?type=articles" className="text-xs sm:text-sm font-semibold text-lotus-clay hover:underline">
-              Browse all articles →
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {articles.map((art) => (
-              <ArticleCard key={art._id} article={art} />
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* Curated Products for this Material */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between border-b border-lotus-sand/30 pb-4 mb-8">
-          <div className="flex items-center gap-2.5">
-            <Package className="w-5 h-5 text-lotus-clay" />
-            <h2 className="font-serif text-2xl sm:text-3xl font-bold text-lotus-forest">
-              Curated {material.name} Decor
-            </h2>
-          </div>
-          <Link
-            to={`/products?material=${material.slug}`}
-            className="text-xs sm:text-sm font-semibold text-lotus-clay hover:underline"
-          >
-            View all {material.name} products →
-          </Link>
         </div>
-
-        {products && products.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {products.map((prod) => (
-              <ProductCard key={prod._id} product={prod} />
-            ))}
-          </div>
-        ) : (
-          <div className="py-8 text-center text-lotus-charcoal/60 bg-white rounded-2xl border border-lotus-sand/30">
-            No products currently cataloged under this material. Check back soon!
-          </div>
-        )}
       </section>
     </div>
   );
