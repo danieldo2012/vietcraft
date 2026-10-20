@@ -825,14 +825,24 @@ export const AdminProductEditPage: React.FC = () => {
             </div>
 
             <div className="pt-2">
-              <label className="flex items-center gap-2 cursor-pointer">
+              <label
+                className={`flex items-start gap-3 cursor-pointer rounded-xl border p-3 transition-colors ${
+                  formData.featured ? 'border-amber-400 bg-amber-50' : 'border-gray-200 hover:bg-gray-50'
+                }`}
+              >
                 <input
                   type="checkbox"
                   checked={formData.featured}
                   onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
-                  className="w-4 h-4 rounded text-lotus-forest focus:ring-lotus-forest"
+                  className="mt-0.5 w-4 h-4 rounded text-lotus-forest focus:ring-lotus-forest"
                 />
-                <span className="text-xs font-medium text-gray-800">Feature on Homepage</span>
+                <span>
+                  <span className="block text-xs font-semibold text-gray-900">Sản phẩm nổi bật (Featured)</span>
+                  <span className="block text-[11px] text-gray-500 mt-0.5 leading-snug">
+                    Tự động hiện ở mục "Featured Home Decor" trên trang chủ (tối đa 8 sản phẩm, mới nhất lên đầu).
+                    Chỉ hiển thị khi trạng thái là Active.
+                  </span>
+                </span>
               </label>
             </div>
           </div>
