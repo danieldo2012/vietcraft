@@ -1,29 +1,21 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Search, ChevronDown, Menu, X, Sparkles, ArrowUpRight } from 'lucide-react';
+import { Search, Menu, X, ArrowUpRight } from 'lucide-react';
 import { SearchModal } from './SearchModal';
 import { api } from '../services/api';
-import { HeaderSettings, Material, NavigationItem } from '@vietcraft/shared';
+import { HeaderSettings } from '@vietcraft/shared';
 
 export const Header: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isDiscoverOpen, setIsDiscoverOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
 
   // Fetch live Header CMS configuration from backend API
   const { data: headerSettings } = useQuery<HeaderSettings>({
     queryKey: ['header-settings'],
     queryFn: api.getHeader
-  });
-
-  // Fetch active materials for Discover dropdown
-  const { data: materials = [] } = useQuery<Material[]>({
-    queryKey: ['materials-list'],
-    queryFn: api.getMaterials
   });
 
   // Handle scroll shadow and blur effect
@@ -37,27 +29,8 @@ export const Header: React.FC = () => {
 
   // Close menus on route change
   useEffect(() => {
-    setIsDiscoverOpen(false);
     setIsMobileMenuOpen(false);
   }, [location.pathname]);
-
-  // Click outside listener for Discover dropdown
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsDiscoverOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  // Keyboard accessibility for dropdown (Escape key)
-  const handleDropdownKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Escape') {
-      setIsDiscoverOpen(false);
-    }
-  };
 
   const navLinkClass = ({ isActive }: { isActive: boolean }) =>
     `relative py-1 text-sm font-medium transition-colors duration-200 tracking-wide ${
@@ -76,25 +49,13 @@ export const Header: React.FC = () => {
   // Active navigation items sorted by order
   const navItems = (headerSettings?.navigationItems || [
     { id: 'nav-home', label: 'Home', url: '/', type: 'link', order: 0, isActive: true, openInNewTab: false },
-    { id: 'nav-discover', label: 'Discover', url: '/discover', type: 'dropdown', order: 1, isActive: true, openInNewTab: false },
+    { id: 'nav-discover', label: 'Discover', url: '/discover', type: 'link', order: 1, isActive: true, openInNewTab: false },
     { id: 'nav-products', label: 'Products', url: '/products', type: 'link', order: 2, isActive: true, openInNewTab: false },
     { id: 'nav-articles', label: 'Journal', url: '/articles', type: 'link', order: 3, isActive: true, openInNewTab: false },
     { id: 'nav-about', label: 'About Us', url: '/about', type: 'link', order: 4, isActive: true, openInNewTab: false }
   ])
     .filter((item) => item.isActive)
     .sort((a, b) => a.order - b.order);
-
-  // Discover menu items (configured or dynamic active materials)
-  const discoverLabel = headerSettings?.discoverMenu?.label || 'Discover';
-  const discoverItems =
-    headerSettings?.discoverMenu?.items && headerSettings.discoverMenu.items.length > 0
-      ? headerSettings.discoverMenu.items.filter((i) => i.isActive).sort((a, b) => a.order - b.order)
-      : materials.map((m, idx) => ({
-          label: m.name,
-          url: `/discover/${m.slug}`,
-          order: idx,
-          isActive: true
-        }));
 
   return (
     <>
@@ -141,74 +102,7 @@ export const Header: React.FC = () => {
             {/* Desktop Navigation (CMS Managed Tree) */}
             <nav className="hidden md:flex items-center space-x-7" aria-label="Main navigation">
               {navItems.map((item) => {
-                // Render as Discover Dropdown if type is dropdown or label is Discover
-                if (item.type === 'dropdown' || item.url === '/discover') {
-                  return (
-                    <div
-                      key={item.id}
-                      ref={dropdownRef}
-                      className="relative"
-                      onKeyDown={handleDropdownKeyDown}
-                    >
-                      <button
-                        type="button"
-                        onClick={() => setIsDiscoverOpen(!isDiscoverOpen)}
-                        onMouseEnter={() => setIsDiscoverOpen(true)}
-                        aria-expanded={isDiscoverOpen}
-                        aria-haspopup="true"
-                        className={`flex items-center gap-1.5 py-1 text-sm font-medium transition-colors tracking-wide ${
-                          location.pathname.startsWith('/discover')
-                            ? 'text-lotus-forest font-semibold after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-lotus-clay'
-                            : 'text-lotus-charcoal/80 hover:text-lotus-forest'
-                        }`}
-                      >
-                        <span>{item.label || discoverLabel}</span>
-                        <ChevronDown
-                          className={`w-4 h-4 transition-transform duration-200 ${
-                            isDiscoverOpen ? 'rotate-180 text-lotus-clay' : 'text-lotus-charcoal/60'
-                          }`}
-                        />
-                      </button>
-
-                      {/* Dropdown Menu Panel (Dynamic Materials from Database) */}
-                      {isDiscoverOpen && (
-                        <div
-                          className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-72 rounded-xl bg-white shadow-xl border border-lotus-sand/60 py-2 z-50 animate-fade-in"
-                          onMouseLeave={() => setIsDiscoverOpen(false)}
-                          role="menu"
-                        >
-                          <div className="px-4 py-2 border-b border-lotus-sand/30 flex items-center justify-between">
-                            <span className="text-xs font-semibold uppercase tracking-wider text-lotus-forest/60">
-                              Craft Materials
-                            </span>
-                            <Link
-                              to="/discover"
-                              className="text-xs font-medium text-lotus-clay hover:underline flex items-center gap-0.5"
-                            >
-                              All <Sparkles className="w-3 h-3" />
-                            </Link>
-                          </div>
-                          <div className="p-1 max-h-80 overflow-y-auto">
-                            {discoverItems.map((mat) => (
-                              <Link
-                                key={mat.url}
-                                to={mat.url}
-                                role="menuitem"
-                                className="flex flex-col px-3 py-2 rounded-lg hover:bg-lotus-ivory transition-colors group"
-                              >
-                                <span className="text-sm font-medium text-lotus-charcoal group-hover:text-lotus-forest">
-                                  {mat.label}
-                                </span>
-                              </Link>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  );
-                }
-
-                // Normal navigation link
+                // Every item (including Discover) is a plain link: Discover opens the page that lists the categories.
                 return (
                   <NavLink
                     key={item.id}
@@ -272,35 +166,6 @@ export const Header: React.FC = () => {
         {isMobileMenuOpen && (
           <div className="md:hidden border-t border-lotus-sand/40 bg-lotus-ivory px-4 pt-3 pb-6 space-y-3 animate-fade-in">
             {navItems.map((item) => {
-              if (item.type === 'dropdown' || item.url === '/discover') {
-                return (
-                  <div key={item.id} className="py-2 border-b border-lotus-sand/20">
-                    <div className="flex items-center justify-between text-base font-medium text-lotus-forest mb-2">
-                      <span>{item.label || discoverLabel}</span>
-                      <Link
-                        to="/discover"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className="text-xs text-lotus-clay font-normal"
-                      >
-                        View All
-                      </Link>
-                    </div>
-                    <div className="pl-3 grid grid-cols-2 gap-2">
-                      {discoverItems.map((mat) => (
-                        <Link
-                          key={mat.url}
-                          to={mat.url}
-                          onClick={() => setIsMobileMenuOpen(false)}
-                          className="text-sm py-1 text-lotus-charcoal/80 hover:text-lotus-forest"
-                        >
-                          {mat.label}
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                );
-              }
-
               return (
                 <NavLink
                   key={item.id}
