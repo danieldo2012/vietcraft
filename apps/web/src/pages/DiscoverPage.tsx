@@ -55,7 +55,7 @@ export const DiscoverPage: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-20 py-12 pb-24">
+    <div className="space-y-14 pt-10 pb-24">
       <SEOHead
         title="Discover Vietnamese Craft Heritage & Natural Materials | VietCraft"
         description="Explore the ancestral traditions behind Vietnamese rattan, ceramics, lacquer, wood, woven fibers, and silk. Meet the craft villages of Vietnam."
@@ -67,10 +67,10 @@ export const DiscoverPage: React.FC = () => {
           <Sparkles className="w-3.5 h-3.5 text-lotus-clay" />
           <span>Ancestral Origins</span>
         </div>
-        <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-lotus-forest leading-tight">
+        <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-lotus-forest leading-tight">
           Materials Formed by Nature, Perfected by Hand
         </h1>
-        <p className="text-base sm:text-lg text-lotus-charcoal/80 mt-4 leading-relaxed font-light">
+        <p className="text-sm sm:text-base text-lotus-charcoal/80 mt-3 leading-relaxed font-light">
           For centuries, Vietnamese craft communities have worked in harmony with river deltas, highland forests,
           and coastal marshes. Explore each natural medium and discover how thoughtful living begins with respect for raw fiber and clay.
         </p>
@@ -80,10 +80,10 @@ export const DiscoverPage: React.FC = () => {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="border-b border-lotus-sand/30 pb-4 mb-10">
           <h2 className="font-serif text-2xl sm:text-3xl font-bold text-lotus-forest">
-            The Six Natural Mediums
+            Browse by Material
           </h2>
           <p className="text-xs sm:text-sm text-lotus-charcoal/60 mt-1">
-            Click on any material to read its cultural history, technique breakdown, and curated home objects.
+            Choose a material to read its stories first, then shop the curated home objects made from it.
           </p>
         </div>
         <MaterialGrid materials={materials} />
