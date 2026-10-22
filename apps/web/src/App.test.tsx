@@ -36,7 +36,9 @@ describe('VietCraft Web Application', () => {
 
     // Verify navigation links
     expect(screen.getByRole('link', { name: /^Home$/i })).toBeDefined();
-    expect(screen.getByRole('button', { name: /^Discover/i })).toBeDefined();
+    expect(screen.getByRole('link', { name: /^Discover$/i })).toBeDefined();
+    // Discover is a plain link now: no dropdown trigger.
+    expect(screen.queryByRole('button', { name: /^Discover/i })).toBeNull();
     expect(screen.getByRole('link', { name: /^Products$/i })).toBeDefined();
     expect(screen.getByRole('link', { name: /^Journal$/i })).toBeDefined();
     expect(screen.getByRole('link', { name: /^About Us$/i })).toBeDefined();
