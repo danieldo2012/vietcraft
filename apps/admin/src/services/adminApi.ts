@@ -50,6 +50,12 @@ adminClient.interceptors.response.use(
 );
 
 export const adminApi = {
+  // AI Studio
+  generateAI: async (payload: { kind: string; topic: string; keywords?: string; source?: string; notes?: string }): Promise<{ kind: string; output: string }> => {
+    const res = await adminClient.post<ApiResponse<{ kind: string; output: string }>>('/admin/ai/generate', payload);
+    return res.data.data;
+  },
+
   // Auth
   login: async (credentials: { email: string; password: string }): Promise<AuthResponse> => {
     const res = await adminClient.post<ApiResponse<AuthResponse>>('/auth/login', credentials);
