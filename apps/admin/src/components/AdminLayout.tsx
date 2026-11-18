@@ -9,6 +9,7 @@ import {
   Home,
   Mail,
   BarChart3,
+  Sparkles,
   Settings,
   LogOut,
   ExternalLink,
@@ -62,7 +63,8 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
       title: 'Marketing',
       items: [
         { label: 'Newsletter', path: '/admin/newsletter', icon: Mail },
-        { label: 'Analytics', path: '/admin/analytics', icon: BarChart3 }
+        { label: 'Analytics', path: '/admin/analytics', icon: BarChart3 },
+        { label: 'AI Studio', path: '/admin/ai-studio', icon: Sparkles }
       ]
     },
     {
