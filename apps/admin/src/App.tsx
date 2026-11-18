@@ -13,6 +13,7 @@ import { AdminCategoriesPage } from './pages/AdminCategoriesPage';
 import { AdminHomepagePage } from './pages/AdminHomepagePage';
 import { AdminNewsletterPage } from './pages/AdminNewsletterPage';
 import { AdminAnalyticsPage } from './pages/AdminAnalyticsPage';
+import { AdminAIStudioPage } from './pages/AdminAIStudioPage';
 import { AdminSettingsPage } from './pages/AdminSettingsPage';
 import { AdminHeaderPage } from './pages/AdminHeaderPage';
 import { AdminFooterPage } from './pages/AdminFooterPage';
@@ -196,6 +197,7 @@ export const App: React.FC = () => {
             </ProtectedRoute>
           }
         />
+        <Route path="/admin/ai-studio" element={<ProtectedRoute><AdminLayout><AdminAIStudioPage /></AdminLayout></ProtectedRoute>} />
         <Route
           path="/admin/settings"
           element={
