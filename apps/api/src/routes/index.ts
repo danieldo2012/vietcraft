@@ -11,6 +11,7 @@ import contactRoutes from './contactRoutes';
 import searchRoutes from './searchRoutes';
 import analyticsRoutes from './analyticsRoutes';
 import uploadRoutes from './uploadRoutes';
+import aiStudioRoutes from './aiStudioRoutes';
 
 import headerRoutes from './headerRoutes';
 import navigationRoutes from './navigationRoutes';
@@ -36,6 +37,7 @@ router.use('/newsletter', newsletterRoutes);
 router.use('/contact', contactRoutes);
 router.use('/search', searchRoutes);
 router.use('/admin', analyticsRoutes);
+router.use('/admin/ai', aiStudioRoutes);
 router.use('/upload', uploadRoutes);
 
 export default router;
